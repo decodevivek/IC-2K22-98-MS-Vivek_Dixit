@@ -170,17 +170,47 @@ def analyze_video(file_path: str) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Analyze a video file and print its metadata.")
-    parser.add_argument("file", help="Path to the video file (.mp4, .avi, .mov, .mkv, .webm)")
+    from tkinter import Tk, filedialog
+
+    parser = argparse.ArgumentParser(
+        description="Analyze a video file and print its metadata."
+    )
+
+    parser.add_argument(
+        "file",
+        nargs="?",
+        help="Path to the video file"
+    )
+
     args = parser.parse_args()
 
+    file_path = args.file
+
+    # Open file picker if no file is provided
+    if not file_path:
+        root = Tk()
+        root.withdraw()
+        root.attributes("-topmost", True)
+
+        file_path = filedialog.askopenfilename(
+            title="Select a Video File",
+            filetypes=[
+                ("Video Files", "*.mp4 *.avi *.mov *.mkv *.wmv *.flv *.webm *.m4v"),
+                ("All Files", "*.*")
+            ]
+        )
+
+    if not file_path:
+        print("No video selected.")
+        return
+
     try:
-        report = analyze_video(args.file)
+        report = analyze_video(file_path)
+        print(report)
+
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-
-    print(report)
 
 
 if __name__ == "__main__":

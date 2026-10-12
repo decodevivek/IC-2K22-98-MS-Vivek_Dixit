@@ -133,19 +133,44 @@ def analyze_image(file_path: str) -> str:
 
     return "\n".join(lines)
 
-
 def main():
-    parser = argparse.ArgumentParser(description="Analyze an image file and print its metadata.")
-    parser.add_argument("file", help="Path to the image file (.jpg, .jpeg, .png, .tiff, .webp, .bmp)")
+    from tkinter import Tk, filedialog
+
+    parser = argparse.ArgumentParser(
+        description="Analyze an image file and print its metadata."
+    )
+
+    parser.add_argument(
+        "file",
+        nargs="?",
+        help="Path to image file"
+    )
+
     args = parser.parse_args()
 
+    file_path = args.file
+
+    if not file_path:
+        root = Tk()
+        root.withdraw()
+
+        file_path = filedialog.askopenfilename(
+            title="Select an Image",
+            filetypes=[
+                ("Image Files", "*.jpg *.jpeg *.png *.bmp *.tiff *.webp")
+            ]
+        )
+
+    if not file_path:
+        print("No image selected.")
+        return
     try:
-        report = analyze_image(args.file)
+        report = analyze_image(file_path)
+        print(report)
+
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-
-    print(report)
 
 
 if __name__ == "__main__":

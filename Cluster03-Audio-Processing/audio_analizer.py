@@ -128,19 +128,48 @@ def analyze_audio(file_path: str) -> str:
 
     return "\n".join(lines)
 
-
 def main():
-    parser = argparse.ArgumentParser(description="Analyze an audio file and print its metadata.")
-    parser.add_argument("file", help="Path to the audio file (.mp3, .wav, .flac, .ogg, .m4a, .aac)")
+    from tkinter import Tk, filedialog
+
+    parser = argparse.ArgumentParser(
+        description="Analyze an audio file and print its metadata."
+    )
+
+    parser.add_argument(
+        "file",
+        nargs="?",
+        help="Path to the audio file"
+    )
+
     args = parser.parse_args()
 
+    file_path = args.file
+
+    # If no file is provided, open file picker
+    if not file_path:
+        root = Tk()
+        root.withdraw()
+        root.attributes("-topmost", True)
+
+        file_path = filedialog.askopenfilename(
+            title="Select an Audio File",
+            filetypes=[
+                ("Audio Files", "*.mp3 *.wav *.flac *.ogg *.aac *.m4a"),
+                ("All Files", "*.*")
+            ]
+        )
+
+    if not file_path:
+        print("No audio file selected.")
+        return
+
     try:
-        report = analyze_audio(args.file)
+        report = analyze_audio(file_path)
+        print(report)
+
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-
-    print(report)
 
 
 if __name__ == "__main__":
